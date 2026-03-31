@@ -1,19 +1,12 @@
-import { Router } from "express";
-import { batchController } from "../modules/batch/controllers/batch.controller";
-import { documentController } from "../modules/document/controllers/document.controller";
+import express from 'express';
+import batchRoutes from '../modules/batch/routes/batch.routes';
 
-const router = Router();
+const app = express();
+app.use(express.json());
 
-// health
-router.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
+// Routes
+app.use('/api', batchRoutes);
 
-// batch
-router.post("/api/documents/batch", batchController.create);
-router.get("/api/documents/batch/:id", batchController.get);
+app.get('/health', (_, res) => res.json({ status: 'ok' }));
 
-// document
-router.get("/api/documents/:id", documentController.get);
-
-export default router;
+export default app;

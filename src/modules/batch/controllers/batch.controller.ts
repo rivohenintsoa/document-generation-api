@@ -1,15 +1,23 @@
-import { Request, Response } from "express";
-import { batchService } from "../services/batch.service";
+import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
-export const batchController = {
-  async create(req: Request, res: Response) {
-    const result = await batchService.create();
-    res.json(result);
-  },
+export class BatchController {
+  // POST /api/batch
+  static createBatch(req: Request, res: Response) {
+    const { userIds } = req.body;
 
-  async get(req: Request, res: Response) {
-    const { id } = req.params;
-    const result = await batchService.getById(id);
-    res.json(result);
-  },
-};
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ error: 'userIds[] is required and cannot be empty' });
+    }
+
+    // Générer un batchId fictif
+    const batchId = uuidv4();
+
+    // On renvoie le batchId (mock)
+    return res.status(201).json({
+      batchId,
+      status: 'pending',
+      total: userIds.length,
+    });
+  }
+}
