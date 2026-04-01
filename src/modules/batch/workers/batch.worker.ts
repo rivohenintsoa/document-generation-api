@@ -25,11 +25,6 @@ batchQueue.process("generate-document", 10, async (job) => {
       // Simulation génération document
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulation blocage
-      if (userId === 3) {
-        await new Promise((resolve) => setTimeout(resolve, 6000));
-      }
-
       return generatePdfBuffer(`Document PDF pour user ${userId}`);
     })(),
     5000
