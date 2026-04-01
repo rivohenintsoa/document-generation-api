@@ -1,10 +1,18 @@
-import { batchRepository } from "../repositories/batch.repository";
-export const batchService = {
-  async create() {
-    return batchRepository.create();
-  },
+import { batchQueue } from '../queues/batch.queue';
 
-  async getById(id: string) {
-    return batchRepository.findById(id);
-  },
-};
+export class BatchService {
+  static async enqueueBatch(userIds: number[], batchId: string) {
+    const jobs = userIds.map((userId) => ({
+      userId,
+      batchId,
+    }));
+
+    // Ajout en masse
+    await batchQueue.addBulk(
+      jobs.map((data) => ({
+        name: 'generate-document',
+        data,
+      }))
+    );
+  }
+}

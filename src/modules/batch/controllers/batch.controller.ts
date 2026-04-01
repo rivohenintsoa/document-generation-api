@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { BatchModel } from '../models/batch.model';
+import { BatchService } from '../services/batch.service';
 
 export class BatchController {
   // POST /api/batch
@@ -14,6 +15,7 @@ export class BatchController {
     const batchId = uuidv4();
 
     try {
+      // 1. Sauvegarde en DB
       const batch = new BatchModel({
         batchId,
         status: 'pending',
@@ -22,11 +24,15 @@ export class BatchController {
 
       await batch.save();
 
+      // 2. Envoi des jobs dans la queue
+      await BatchService.enqueueBatch(userIds, batchId);
+
       return res.status(201).json({
         batchId: batch.batchId,
         status: batch.status,
         total: batch.total,
       });
+
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: 'Failed to create batch' });
