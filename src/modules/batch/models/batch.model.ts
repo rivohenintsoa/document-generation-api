@@ -4,6 +4,8 @@ export interface IBatch extends Document {
   batchId: string;
   status: 'pending' | 'processing' | 'done' | 'failed';
   total: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const batchSchema = new Schema<IBatch>(

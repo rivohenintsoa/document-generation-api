@@ -39,6 +39,7 @@ export class BatchController {
 
     try {
       const batch = await BatchModel.findOne({ batchId: id });
+
       if (!batch) {
         return res.status(404).json({ error: 'Batch not found' });
       }
@@ -47,6 +48,8 @@ export class BatchController {
         batchId: batch.batchId,
         status: batch.status,
         total: batch.total,
+        createdAt: batch.createdAt,
+        updatedAt: batch.updatedAt,
       });
     } catch (err) {
       console.error(err);
