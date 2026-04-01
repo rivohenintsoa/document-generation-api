@@ -1,4 +1,5 @@
 import { batchQueue } from '../queues/batch.queue';
+import { DocumentModel } from '../../document/models/document.model';
 
 console.log('Worker started...');
 
@@ -10,7 +11,16 @@ batchQueue.process('generate-document', async (job) => {
   // Simulation génération document
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  console.log(`Document generated for user ${userId}`);
+  // Stocker le “document” en DB
+  const doc = new DocumentModel({
+    batchId,
+    userId,
+    content: `Document simulé pour user ${userId}`,
+    status: 'done',
+  });
+  await doc.save();
+
+  console.log(`Document saved for user ${userId}`);
 
   return { success: true };
 });
