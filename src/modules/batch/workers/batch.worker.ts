@@ -1,9 +1,10 @@
-import { batchQueue } from '../queues/batch.queue';
-import { DocumentModel } from '../../document/models/document.model';
+import { batchQueue } from "../queues/batch.queue";
+import { DocumentModel } from "../../document/models/document.model";
+import { generatePdfBuffer } from "../../document/services/pdf.service";
 
-console.log('Worker started...');
+console.log("Worker started...");
 
-batchQueue.process('generate-document', async (job) => {
+batchQueue.process("generate-document", async (job) => {
   const { userId, batchId } = job.data;
 
   console.log(`Processing user ${userId} for batch ${batchId}`);
@@ -11,12 +12,16 @@ batchQueue.process('generate-document', async (job) => {
   // Simulation génération document
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  const pdfBuffer = await generatePdfBuffer(
+    `Document PDF simulé pour user ${userId}`,
+  );
+
   // Stocker le “document” en DB
   const doc = new DocumentModel({
     batchId,
     userId,
-    content: `Document simulé pour user ${userId}`,
-    status: 'done',
+    content: pdfBuffer.toString('base64'),
+    status: "done",
   });
   await doc.save();
 

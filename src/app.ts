@@ -12,10 +12,6 @@ connectMongo();
   try {
     await batchQueue.isReady();
     console.log('Bull queue connected to Redis');
-
-    await batchQueue.add({ test: 'hello queue' });
-    console.log('Test job ajouté à la queue');
-
   } catch (err) {
     console.error('Bull queue error', err);
   }
