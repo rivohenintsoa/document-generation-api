@@ -4,7 +4,7 @@ import { generatePdfBuffer } from "../../document/services/pdf.service";
 
 console.log("Worker started...");
 
-batchQueue.process("generate-document", async (job) => {
+batchQueue.process("generate-document", 10, async (job) => {
   const { userId, batchId } = job.data;
 
   console.log(`Processing user ${userId} for batch ${batchId}`);
@@ -13,14 +13,14 @@ batchQueue.process("generate-document", async (job) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const pdfBuffer = await generatePdfBuffer(
-    `Document PDF simulé pour user ${userId}`,
+    `Document PDF généré pour user ${userId}`,
   );
 
   // Stocker le “document” en DB
   const doc = new DocumentModel({
     batchId,
     userId,
-    content: pdfBuffer.toString('base64'),
+    content: pdfBuffer.toString("base64"),
     status: "done",
   });
   await doc.save();
