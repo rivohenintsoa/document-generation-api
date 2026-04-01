@@ -1,9 +1,12 @@
-import { Router } from "express";
+import express from 'express';
+import batchRoutes from '../modules/batch/routes/batch.routes';
 
-const router = Router();
+const app = express();
+app.use(express.json());
 
-router.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
+// Routes
+app.use('/api', batchRoutes);
 
-export default router;
+app.get('/health', (_, res) => res.json({ status: 'ok' }));
+
+export default app;

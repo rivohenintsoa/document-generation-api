@@ -1,0 +1,14 @@
+# Node
+node_modules/
+dist/
+.env
+*.log
+*.tsbuildinfo
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Bull / Redis
+*.pid
