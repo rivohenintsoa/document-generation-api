@@ -4,6 +4,16 @@ import { generatePdfBuffer } from "../../document/services/pdf.service";
 
 console.log("Worker started...");
 
+batchQueue.on("failed", (job, err) => {
+  console.log(
+    `Job ${job.id} failed (attempt ${job.attemptsMade}): ${err.message}`
+  );
+});
+
+batchQueue.on("completed", (job) => {
+  console.log(`Job ${job.id} completed`);
+});
+
 batchQueue.process("generate-document", 10, async (job) => {
   const { userId, batchId } = job.data;
 
