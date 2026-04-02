@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 import Redis from "ioredis";
 import { batchQueue } from "../modules/batch/queues/batch.queue";
 
-const redisClient = new Redis();
+const redisClient = new Redis({
+  host: process.env.REDIS_HOST || "localhost",
+  port: Number(process.env.REDIS_PORT) || 6379,
+});
 
 async function shutdown(signal: string) {
   console.log(`Received ${signal}, shutting down gracefully...`);
