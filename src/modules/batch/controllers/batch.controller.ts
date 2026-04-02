@@ -1,15 +1,18 @@
-import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { BatchModel } from '../models/batch.model';
-import { BatchService } from '../services/batch.service';
+import { NextFunction, Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
+import { BatchModel } from "../models/batch.model";
+import { BatchService } from "../services/batch.service";
+import { DocumentModel } from "../../document/models/document.model";
 
 export class BatchController {
-  // POST /api/batch
-  static async createBatch(req: Request, res: Response) {
+  // POST /api/documents/batch
+  static async createBatch(req: Request, res: Response, next: NextFunction) {
     const { userIds } = req.body;
 
     if (!Array.isArray(userIds) || userIds.length === 0) {
-      return res.status(400).json({ error: 'userIds[] is required and cannot be empty' });
+      const error: any = new Error("userIds[] is required and cannot be empty");
+      error.statusCode = 400;
+      return next(error);
     }
 
     const batchId = uuidv4();
@@ -18,7 +21,7 @@ export class BatchController {
       // 1. Sauvegarde en DB
       const batch = new BatchModel({
         batchId,
-        status: 'pending',
+        status: "pending",
         total: userIds.length,
       });
 
@@ -32,23 +35,25 @@ export class BatchController {
         status: batch.status,
         total: batch.total,
       });
-
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to create batch' });
+      next(err);
     }
   }
 
-  // GET /api/batch/:id
-  static async getBatch(req: Request, res: Response) {
+  // GET /api/documents/batch/:id
+  static async getBatch(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
 
     try {
       const batch = await BatchModel.findOne({ batchId: id });
 
       if (!batch) {
-        return res.status(404).json({ error: 'Batch not found' });
+        const error: any = new Error("Batch not found");
+        error.statusCode = 404;
+        return next(error);
       }
+
+      const documents = await DocumentModel.find({ batchId: id });
 
       return res.json({
         batchId: batch.batchId,
@@ -56,10 +61,15 @@ export class BatchController {
         total: batch.total,
         createdAt: batch.createdAt,
         updatedAt: batch.updatedAt,
+
+        documents: documents.map((doc) => ({
+          id: doc._id,
+          userId: doc.userId,
+          status: doc.status,
+        })),
       });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to fetch batch' });
+      next(err);
     }
   }
 }
