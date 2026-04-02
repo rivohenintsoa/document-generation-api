@@ -1,28 +1,32 @@
 import client from "prom-client";
 
-export const register = new client.Registry();
-
-// métriques par défaut (CPU, mémoire, etc.)
-client.collectDefaultMetrics({ register });
-
-// compteur de jobs
-export const jobsTotal = new client.Counter({
-  name: "jobs_total",
-  help: "Total number of jobs processed",
+// Compteurs
+export const documentsGenerated = new client.Counter({
+  name: "documents_generated_total",
+  help: "Total number of documents generated",
 });
 
-// erreurs
 export const jobsFailed = new client.Counter({
   name: "jobs_failed",
   help: "Total number of failed jobs",
 });
 
-// succès
 export const jobsCompleted = new client.Counter({
   name: "jobs_completed",
   help: "Total number of completed jobs",
 });
 
-register.registerMetric(jobsTotal);
-register.registerMetric(jobsFailed);
-register.registerMetric(jobsCompleted);
+// Histogramme pour batch duration
+export const batchProcessingDuration = new client.Histogram({
+  name: "batch_processing_duration_seconds",
+  help: "Batch processing duration in seconds",
+  buckets: [1, 2, 5, 10, 30, 60, 120], // adaptable
+});
+
+// Gauge pour queue size
+export const queueSize = new client.Gauge({
+  name: "queue_size",
+  help: "Number of jobs currently in the queue",
+});
+
+export const register = client.register;
