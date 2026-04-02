@@ -9,6 +9,6 @@ app.use(express.json());
 // Routes
 app.use('/api/documents', batchRoutes);
 app.use('/api/documents', documentRoutes);
-app.use("/api", healthRoutes);
+app.use("/", healthRoutes);
 
 export default app;
