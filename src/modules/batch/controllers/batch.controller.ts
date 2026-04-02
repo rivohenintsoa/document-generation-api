@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { BatchModel } from "../models/batch.model";
 import { BatchService } from "../services/batch.service";
+import { DocumentModel } from "../../document/models/document.model";
 
 export class BatchController {
-  // POST /api/batch
+  // POST /api/documents/batch
   static async createBatch(req: Request, res: Response, next: NextFunction) {
     const { userIds } = req.body;
 
@@ -39,7 +40,7 @@ export class BatchController {
     }
   }
 
-  // GET /api/batch/:id
+  // GET /api/documents/batch/:id
   static async getBatch(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
 
@@ -52,12 +53,20 @@ export class BatchController {
         return next(error);
       }
 
+      const documents = await DocumentModel.find({ batchId: id });
+
       return res.json({
         batchId: batch.batchId,
         status: batch.status,
         total: batch.total,
         createdAt: batch.createdAt,
         updatedAt: batch.updatedAt,
+
+        documents: documents.map((doc) => ({
+          id: doc._id,
+          userId: doc.userId,
+          status: doc.status,
+        })),
       });
     } catch (err) {
       next(err);

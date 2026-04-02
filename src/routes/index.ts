@@ -6,8 +6,8 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use('/api', batchRoutes);
-app.use('/api', documentRoutes);
+app.use('/api/documents', batchRoutes);
+app.use('/api/documents', documentRoutes);
 
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 
