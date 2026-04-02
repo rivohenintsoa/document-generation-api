@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 import Redis from "ioredis";
 import { batchQueue } from "../../batch/queues/batch.queue";
 
-const redisClient = new Redis(); // ou récupère ton client existant
+const redisClient = new Redis({
+  host: process.env.REDIS_HOST || "localhost",
+  port: Number(process.env.REDIS_PORT) || 6379,
+});
 
 export class HealthController {
   static async check(req: Request, res: Response) {

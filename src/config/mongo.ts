@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/document_generation_api';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://0.0.0.0:27018/document_generation_api';
 
 export const connectMongo = async () => {
   try {
