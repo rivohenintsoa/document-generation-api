@@ -1,0 +1,63 @@
+openapi: 3.0.3
+info:
+  title: Document Generation API
+  version: 1.0.0
+  description: API backend scalable pour génération de documents PDF
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/documents/batch:
+    post:
+      summary: Créer un batch de documents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIds:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 2, 3]
+      responses:
+        '200':
+          description: Batch créé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batchId:
+                    type: string
+                  status:
+                    type: string
+                  total:
+                    type: integer
+  /api/documents/batch/{batchId}:
+    get:
+      summary: Statut d’un batch
+      parameters:
+        - in: path
+          name: batchId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Statut du batch
+  /api/documents/{documentId}:
+    get:
+      summary: Récupérer un document PDF
+      parameters:
+        - in: path
+          name: documentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document PDF
+          content:
+            application/pdf: {}

@@ -97,6 +97,12 @@ GET /api/documents/batch/:batchId
 GET /api/documents/:documentId
 ```
 
+### Documents (OpenApi)
+
+```
+GET /api/docs
+```
+
 ### Health check
 
 ```
@@ -178,6 +184,7 @@ docker compose up --build
 | API | http://localhost:3000 |
 | Metrics | http://localhost:3000/metrics |
 | Health | http://localhost:3000/health |
+| Documents | http://localhost:3000/api/docs |
 
 ---
 
