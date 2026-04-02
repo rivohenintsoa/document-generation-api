@@ -69,7 +69,6 @@ batchQueue.process("generate-document", 10, async (job) => {
     // Génération PDF avec timeout
     const pdfBuffer = await withTimeout(
       (async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         return generatePdfBuffer(`Document PDF pour user ${userId}`);
       })(),
       5000,
