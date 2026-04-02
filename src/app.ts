@@ -3,6 +3,8 @@ import routes from "./routes";
 import { connectMongo } from "./config/mongo";
 import { batchQueue } from './modules/batch/queues/batch.queue';
 import { errorHandler } from "./middlewares/error.middleware";
+import metricsRoutes from "./routes/metrics.routes";
+import "./modules/batch/workers/batch.worker";
 
 const app = express();
 
@@ -22,5 +24,6 @@ app.use(express.json());
 app.use(routes);
 
 app.use(errorHandler);
+app.use(metricsRoutes);
 
 export default app;

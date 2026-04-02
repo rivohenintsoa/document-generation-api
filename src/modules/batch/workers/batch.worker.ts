@@ -3,6 +3,7 @@ import { DocumentModel } from "../../document/models/document.model";
 import { generatePdfBuffer } from "../../document/services/pdf.service";
 import { withTimeout } from "../../../utils/timeout";
 import { logger } from "../../../utils/logger";
+import { jobsCompleted, jobsFailed, jobsTotal } from "../../../utils/metrics";
 
 console.log("Worker started...");
 
@@ -32,6 +33,7 @@ batchQueue.on("completed", (job) => {
 
 batchQueue.process("generate-document", 10, async (job) => {
   const { userId, batchId } = job.data;
+  jobsTotal.inc();
 
   const log = logger.child({ userId, batchId });
   log.info("Processing job");
@@ -41,10 +43,6 @@ batchQueue.process("generate-document", 10, async (job) => {
       (async () => {
         // Simulation génération document
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        if (userId == 3) {
-          await new Promise((resolve) => setTimeout(resolve, 6000));
-        }
 
         return generatePdfBuffer(`Document PDF pour user ${userId}`);
       })(),
@@ -62,10 +60,10 @@ batchQueue.process("generate-document", 10, async (job) => {
 
     log.info("Document saved");
 
+    jobsCompleted.inc(); 
     return { success: true };
   } catch (err: any) {
-    log.error({ error: err.message }, "Job failed inside worker");
-
+    jobsFailed.inc();
     throw err;
   }
 });
